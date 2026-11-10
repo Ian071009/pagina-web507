@@ -6,26 +6,22 @@ $base_datos = "cafeteria507";
 
 $mensaje_alerta = ""; 
 
+// Recibir respuesta de guardar-contacto.php
+if (isset($_GET['status'])) {
+    if ($_GET['status'] == 'exito') {
+        $mensaje_alerta = "¡Datos guardados con éxito!";
+    } elseif ($_GET['status'] == 'error') {
+        $mensaje_alerta = "Error al guardar los datos.";
+    } elseif ($_GET['status'] == 'campos_vacios') {
+        $mensaje_alerta = "Por favor llena todos los campos.";
+    }
+}
+
 try {
     $conexion = new PDO("mysql:host=$servidor;dbname=$base_datos;charset=utf8", $usuario, $password);
     $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // 1. Registrar cliente / mensaje
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['registrar'])) {
-        $nombre = $_POST['nombre'] ?? '';
-        $correo = $_POST['correo'] ?? '';
-        $mensaje = $_POST['mensaje'] ?? '';
-
-        if (!empty($nombre) && !empty($correo) && !empty($mensaje)) {
-            $sql = "INSERT INTO clientes (nombre, correo, mensaje) VALUES (:nombre, :correo, :mensaje)";
-            $stmt = $conexion->prepare($sql);
-            $stmt->execute([':nombre' => $nombre, ':correo' => $correo, ':mensaje' => $mensaje]);
-            
-            $mensaje_alerta = "¡Datos guardados con éxito!";
-        }
-    }
-
-    // 2. Eliminar cliente por correo
+    // 1. Eliminar cliente por correo
     if (isset($_GET['eliminar_correo'])) {
         $correo_eliminar = $_GET['eliminar_correo'];
 
@@ -36,7 +32,7 @@ try {
         $mensaje_alerta = "¡Registro eliminado con éxito!";
     }
 
-    // 3. Buscar clientes por nombre en la tabla 'clientes'
+    // 2. Buscar clientes por nombre
     $busqueda = $_GET['busqueda'] ?? '';
     if (!empty($busqueda)) {
         $stmt = $conexion->prepare("SELECT * FROM clientes WHERE nombre LIKE :busqueda");
@@ -260,7 +256,7 @@ try {
                     <input type="text" name="busqueda" placeholder="Buscar cliente por nombre..." value="<?php echo htmlspecialchars($busqueda); ?>">
                     <button type="submit">Buscar</button>
                     <?php if (!empty($busqueda)): ?>
-                        <a href="?" class="btn-reset">Ver todos</a>
+                        <a href="INDEX2.php#admin" class="btn-reset">Ver todos</a>
                     <?php endif; ?>
                 </form>
             </div>
@@ -303,7 +299,7 @@ try {
     <script>
         <?php if (!empty($mensaje_alerta)): ?>
             alert("<?php echo $mensaje_alerta; ?>");
-            window.location.href = "<?php echo strtok($_SERVER['PHP_SELF'], '?'); ?>#admin";
+            window.location.href = "INDEX2.php#admin";
         <?php endif; ?>
     </script>
 </body>

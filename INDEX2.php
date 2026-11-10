@@ -237,7 +237,7 @@ try {
         <!-- SECCIÓN CONTACTO -->
         <section id="contacto">
             <h2>Contacto</h2>
-            <form class="contacto-form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>#contacto" method="POST">
+            <form class="contacto-form" action="guardar-contacto.php" method="POST">
                 <label>Nombre:</label>
                 <input type="text" name="nombre" required><br><br>
 
